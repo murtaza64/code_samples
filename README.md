@@ -29,7 +29,7 @@ External links:
 [Teleport (Python, 2018)](https://github.com/murtaza64/teleport/blob/master/tp.py)
 A command line utility that allows you to teleport around your filetree! (full code linked)
 
-The full source for [codeline](thecodeline.co), an older project of mine, is up on my github. 
+The full source for [codeline](http://thecodeline.co), an older project of mine, is [up here](http://github.com/murtaza64/codeline). 
 
 
 Some selected source files are included in this repo.
