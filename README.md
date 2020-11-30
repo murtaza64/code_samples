@@ -340,7 +340,7 @@ Check out the rest of the script for more.
 
 ## RPi Timetable
 
-A few years ago, I built an LED timetable for my school desk using a Raspberry Pi. Rendering of text to the LED grid was handled by the classes in `matrix.py`, and the main script ran two threads (one for the modulation of the LEDs and one for updating the current lesson based on the current time). The script includes a helper function to make a bitmap which I used for testing (and fun). This is a little older, so please excuse the inadherence to Python style.
+A few years ago, I built an LED timetable for my school desk using a Raspberry Pi. Rendering of text to the LED grid was handled by the classes in `matrix.py`, and the main script ran two threads (one for the modulation of the LEDs and one for updating the current lesson based on the current time). The script includes a helper function to make a bitmap which I used for testing (and fun). The rest is a little uninteresting as it is just mostly matrix transposition, but it was interesting coming up with a data structure and relevant methods to represent a scrolling LED sign. This is a little older, so please excuse the inadherence to Python style.
 
 ```python
 from time import sleep
