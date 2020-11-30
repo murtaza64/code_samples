@@ -1,7 +1,7 @@
 # Murtaza's Code Samples / portfolio
-The samples from Essaystance are less interesting than the snippets from random projects and challenges I've collected over the years, which often show more cleverness (perhaps at the cost of readability).
-
 On this page you will find a subset of my programming skills, and hopefully what you're looking for is here.
+
+The samples from Essaystance are less interesting than the snippets from random projects and challenges I've collected over the years, which often show more cleverness (perhaps at the cost of readability).
 
 [Coding Challenges](#coding-challenges)
 Some selected coding challenge solutions I had lying around. Show problem solving, recursion, and use of Python-specific features.
@@ -13,16 +13,19 @@ My latest web project in Django. Snippets show some backend view logic and front
 Terminal chess I built in stock Python. Uses OOP and generators extensively.
 
 [RPi Timetable (2016)](#rpi-timetable)
-Snippet shows a custom data structure used to reprsent an LED grid for displaying text.
+Snippet shows a custom data structure used to reprsent an LED grid for displaying text. Employs multithreading.
 
 [Ray Tracing (C++, 2020)](#ray-tracing)
-For CS478, a simple raytracer in stock C++.
+For CS478 Graphics, a simple raytracer in stock C++.
+
+[Fork (C, 2020)](#fork)
+For CS323 Systems, kernel code to handle forking a process.
 
 [Friendship Graphs (2018)](#friendship-graphs)
 A personal dataviz experiment/project. Snippet shows data manipulation and cleaning.
 
 [Hash Table (C, 2018)](#hash-table)
-A C project for school. Shows use of pointers and understanding of data structures
+For CS223. Shows use of pointers and understanding of data structures.
 
 External links:
 
@@ -34,8 +37,10 @@ The full source for [codeline](http://thecodeline.co), an older project of mine,
 
 Some selected source files are included in this repo.
 
-Small notes: I forgot to include `git` on my resume. I indeed have experience with `git`, and have used it extensively in my projects. Also, the small gap during 2019 was due to medical reasons.
-
+Notes: 
+* I forgot to include `git` on some versions of my resume. I indeed have experience with `git`, and have used it extensively in my projects. 
+* The gap during 2019 was for medical reasons.
+* I have experience with natural language processing, but so far have not done a substantial project requiring me to write more than small amounts of code.
 
 
 ## Coding Challenges
@@ -589,6 +594,111 @@ This is from CS 478 Graphics. It generated [this movie](https://www.youtube.com/
       VEC3 reflect_color = rayColor(reflect, nlights, lights, depth+1);
       color = k_reflect*reflect_color + (1-k_reflect)*refract_color;
     }
+```
+## Fork 
+As part of CS323, we had to implement a bunch of kernel functionality on a toy OS. This is how I implemented the `fork` system call.
+```C
+case INT_SYS_FORK: {
+        int found_slot = 0;
+        int i;
+        for (i = 1; i < NPROC; i++){
+            if (processes[i].p_state == P_FREE) {
+                found_slot = 1;
+                break;
+            }
+        }
+        if (!found_slot){
+            current->p_registers.reg_rax = -1;
+        }
+        pid_t new_pid = processes[i].p_pid;
+        proc* new = &processes[i];
+        int failed = 0;
+
+        //begin copied code [NOTE: this comment was for me, and was referring to my own code that I copied from earlier in the program]
+        process_init(&processes[new_pid], 0);
+        uintptr_t page_table_addrs[5];
+        x86_64_pagetable* proc_pagetable_ptrs[5];
+        for(i = 0; i < 5; i++){
+            page_table_addrs[i] = get_available_page();
+            if (page_table_addrs[i] == 0) {
+                failed = 1;
+                break;
+            }
+            assign_physical_page((uintptr_t) page_table_addrs[i], new_pid);
+            proc_pagetable_ptrs[i] = (x86_64_pagetable*) page_table_addrs[i];
+            memset(proc_pagetable_ptrs[i], 0, PAGESIZE);
+        }
+        
+        x86_64_pagetable* proc_pagetable = proc_pagetable_ptrs[0];
+        proc_pagetable_ptrs[0]->entry[0] =
+            (x86_64_pageentry_t) proc_pagetable_ptrs[1] | PTE_P | PTE_W | PTE_U;
+        proc_pagetable_ptrs[1]->entry[0] =
+            (x86_64_pageentry_t) proc_pagetable_ptrs[2] | PTE_P | PTE_W | PTE_U;
+        proc_pagetable_ptrs[2]->entry[0] =
+            (x86_64_pageentry_t) proc_pagetable_ptrs[3] | PTE_P | PTE_W | PTE_U;
+        proc_pagetable_ptrs[2]->entry[1] =
+            (x86_64_pageentry_t) proc_pagetable_ptrs[4] | PTE_P | PTE_W | PTE_U;
+
+        log_printf("address of pt for pid %i is %p\n", new_pid, proc_pagetable);
+        log_printf("owner of pt is %i\n", pageinfo[PAGENUMBER(proc_pagetable)].owner);
+
+        for(int addr = 0x0; addr < PROC_START_ADDR; addr += PAGESIZE) {
+            vamapping map = virtual_memory_lookup(kernel_pagetable, addr);
+            virtual_memory_map(proc_pagetable, addr, map.pa, PAGESIZE, map.perm, NULL);
+        }
+
+        processes[new_pid].p_pagetable = proc_pagetable;
+        
+        //++pageinfo[PAGENUMBER(proc_pagetable)].refcount;
+        // int r = program_load(&processes[pid], program_number, NULL);
+        // assert(r >= 0);
+        processes[new_pid].p_registers.reg_rsp = MEMSIZE_VIRTUAL;
+        uintptr_t stack_pa = get_available_page();
+        uintptr_t stack_page = processes[new_pid].p_registers.reg_rsp - PAGESIZE;
+        assign_physical_page(stack_pa, new_pid);
+        virtual_memory_map(processes[new_pid].p_pagetable, stack_page, stack_pa,
+                        PAGESIZE, PTE_P | PTE_W | PTE_U, NULL);
+        processes[new_pid].p_state = P_RUNNABLE;
+        //end copied code
+	
+        for (uintptr_t va = PROC_START_ADDR; va < MEMSIZE_VIRTUAL; va += PAGESIZE) {
+            vamapping map = virtual_memory_lookup(current->p_pagetable, va);
+            if (map.pn >= 0) {
+                if ((map.perm & PTE_W) == 0) {
+                    virtual_memory_map(processes[new_pid].p_pagetable, va, map.pa, PAGESIZE, map.perm, NULL);
+                    pageinfo[PAGENUMBER(map.pa)].refcount++;
+                }
+                else {
+                    uintptr_t new_pa = get_available_page();
+                    if (new_pa == 0) {
+                        failed = 1;
+                        break;
+                    }
+                    assign_physical_page(new_pa, new_pid);
+                    virtual_memory_map(processes[new_pid].p_pagetable, va, new_pa, PAGESIZE, map.perm, NULL);
+                    memcpy((void*) new_pa, (void*) map.pa, PAGESIZE);
+                }
+            }
+        }
+        if (failed) {
+            log_printf("failed a fork of pid %i\n", current->p_pid);
+            current->p_registers.reg_rax = -1;
+            for (uintptr_t pa = PAGESIZE; pa < MEMSIZE_PHYSICAL; pa += PAGESIZE) {
+                // vamapping map = virtual_memory_lookup(new->p_pagetable, va);
+                int pn = PAGENUMBER(pa);
+                if (pageinfo[pn].owner == new->p_pid) {
+                    log_printf("freeing page %i\n", pn);
+                    pageinfo[pn].owner = 0;
+                    pageinfo[pn].refcount = 0;
+                }
+            }
+            new->p_state = P_FREE;
+            break;
+        }
+        current->p_registers.reg_rax = new_pid;
+        new->p_registers = current->p_registers;
+        new->p_registers.reg_rax = 0;
+        break;
 ```
 
 ## Friendship Graphs
