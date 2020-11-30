@@ -8,9 +8,9 @@ The samples from Essaystance are less interesting than the snippets from random 
 * [Ray Tracing (C++)](#ray-tracing)
 * [Coding Challenges](#coding-challenges)
 
-Small note: I forgot to include `git` on my resume. I indeed have experience with `git`, and have used it extensively in my projects.
+Small notes: I forgot to include `git` on my resume. I indeed have experience with `git`, and have used it extensively in my projects. Also, the small gap during 2019 was due to medical reasons.
 
-## Essaystance
+## Essaystance (2020)
 This platform provides highschoolers with high quality, affordable essay feedback from students at the universities they want to apply to.
 
 ### Priority filter
@@ -258,7 +258,7 @@ $(document).ready(function() {
 })
 ```
 
-## Chess 
+## Chess (2017)
 I created this terminal chess a while back. It makes use of some nice Python features. It supports everything except en passant and castling, which slipped my mind at the time. Below are some snippets, but the full code is available in the repo.
 
 Example piece class. `theoretical moves` is a generator used to retrieve all moves that the piece could make if the board were empty. This is combined with `validate_move` to create the square highlights in the terminal when you select a piece. `validate_move` is sometimes used directly if algebraic chess notation is used to make the move.
@@ -338,7 +338,7 @@ def print_piece_info(self, piece):
 ```
 Check out the rest of the script for more.
 
-## RPi Timetable
+## RPi Timetable (2016)
 
 A few years ago, I built an LED timetable for my school desk using a Raspberry Pi. Rendering of text to the LED grid was handled by the classes in `matrix.py`, and the main script ran two threads (one for the modulation of the LEDs and one for updating the current lesson based on the current time). The script includes a helper function to make a bitmap which I used for testing (and fun). The rest is a little uninteresting as it is just mostly matrix transposition, but it was interesting coming up with a data structure and relevant methods to represent a scrolling LED sign. This is a little older, so please excuse the inadherence to Python style.
 
@@ -513,7 +513,7 @@ if __name__ == "__main__":
 	print(errors)
 ```
 
-## Ray Tracing
+## Ray Tracing (2020)
 
 This is from CS 478 Graphics. It generated [this movie](https://www.youtube.com/watch?v=UhzPQjyFjdE). The full file is available in the repo (`previz.cpp`), but this snippet shows how glass refraction is calculated for a sphere. This includes Fresnel effects.
 
@@ -561,7 +561,7 @@ This is from CS 478 Graphics. It generated [this movie](https://www.youtube.com/
 ```
 
 ## Coding Challenges
-### Nested Brackets
+### Nested Brackets (2017)
 Confirm if a string's brackets are nested properly
 
 ```python
@@ -590,7 +590,7 @@ def check_brackets(st):
 #print(check_brackets(st))
 ```
 
-### Matrix determinant
+### Matrix determinant (2017)
 
 ```python
 def determinant(matrix):
@@ -609,7 +609,7 @@ def determinant(matrix):
     return result
 ```
 
-### Infix to postfix
+### Infix to postfix (2017)
 
 ```python
 def postfix_recursive(infix_l):
@@ -633,7 +633,7 @@ def postfix_recursive(infix_l):
 to_postfix = lambda infix: ''.join(postfix_recursive(list(infix+')')))
 ```
 
-### Piglatin oneliner
+### Piglatin oneliner (2016)
 
 ```python
 def pig_it(text):
