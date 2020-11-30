@@ -2,7 +2,7 @@
 On this page you will find a subset of my programming skills, and hopefully what you're looking for is here.
 
 The samples from Essaystance are less interesting than the snippets from random projects and challenges I've collected over the years, which often show more cleverness (perhaps at the cost of readability).
-&nbsp;
+
 &nbsp;
 
 [Coding Challenges](#coding-challenges)
@@ -19,7 +19,7 @@ Snippet shows a custom data structure used to reprsent an LED grid for displayin
 
 [Friendship Graphs (2018)](#friendship-graphs)
 A personal dataviz experiment/project. Snippet shows data manipulation and cleaning.
-&nbsp;
+
 &nbsp;
 
 Academic:
@@ -33,6 +33,8 @@ For CS323 Systems, kernel code to handle forking a process.
 [Hash Table (C, 2018)](#hash-table)
 For CS223. Shows use of pointers and understanding of data structures.
 
+&nbsp;
+
 External links:
 
 [Teleport (Python, 2018)](https://github.com/murtaza64/teleport/blob/master/tp.py)
@@ -40,8 +42,9 @@ A command line utility that allows you to teleport around your filetree! (full c
 
 The full source for [codeline](http://thecodeline.co), an older project of mine, is [up here](http://github.com/murtaza64/codeline). 
 
-
 Some selected source files are included in this repo.
+
+&nbsp;
 
 Notes: 
 * I forgot to include `git` on some versions of my resume. I indeed have experience with `git`, and have used it extensively in my projects. 
