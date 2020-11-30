@@ -592,7 +592,7 @@ def check_brackets(st):
 
 ### Matrix determinant
 
-```
+```python
 def determinant(matrix):
     minor_dets = []
     for i, val in enumerate(matrix[0]):
@@ -611,7 +611,7 @@ def determinant(matrix):
 
 ### Infix to postfix
 
-```
+```python
 def postfix_recursive(infix_l):
     ops = {'+': 1, '-': 1, '/': 2, '*': 2, '^': 3}
     postfix, cur_ops = [], []
@@ -635,7 +635,7 @@ to_postfix = lambda infix: ''.join(postfix_recursive(list(infix+')')))
 
 ### Piglatin oneliner
 
-```
+```python
 def pig_it(text):
     return ' '.join(w[1:]+w[0]+'ay' if w.isalpha() else w for w in text.split(' '))
 ```
