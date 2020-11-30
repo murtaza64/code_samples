@@ -2,6 +2,8 @@
 On this page you will find a subset of my programming skills, and hopefully what you're looking for is here.
 
 The samples from Essaystance are less interesting than the snippets from random projects and challenges I've collected over the years, which often show more cleverness (perhaps at the cost of readability).
+&nbsp;
+&nbsp;
 
 [Coding Challenges](#coding-challenges)
 Some selected coding challenge solutions I had lying around. Show problem solving, recursion, and use of Python-specific features.
@@ -15,14 +17,18 @@ Terminal chess I built in stock Python. Uses OOP and generators extensively.
 [RPi Timetable (2016)](#rpi-timetable)
 Snippet shows a custom data structure used to reprsent an LED grid for displaying text. Employs multithreading.
 
+[Friendship Graphs (2018)](#friendship-graphs)
+A personal dataviz experiment/project. Snippet shows data manipulation and cleaning.
+&nbsp;
+&nbsp;
+
+Academic:
+
 [Ray Tracing (C++, 2020)](#ray-tracing)
 For CS478 Graphics, a simple raytracer in stock C++.
 
 [Fork (C, 2020)](#fork)
 For CS323 Systems, kernel code to handle forking a process.
-
-[Friendship Graphs (2018)](#friendship-graphs)
-A personal dataviz experiment/project. Snippet shows data manipulation and cleaning.
 
 [Hash Table (C, 2018)](#hash-table)
 For CS223. Shows use of pointers and understanding of data structures.
