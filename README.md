@@ -8,6 +8,8 @@ The samples from Essaystance are less interesting than the snippets from random 
 * [Ray Tracing (C++)](#ray-tracing)
 * [Coding Challenges](#coding-challenges)
 
+Small note: I forgot to include `git` on my resume. I indeed have experience with `git`, and have used it extensively in my projects.
+
 ## Essaystance
 This platform provides highschoolers with high quality, affordable essay feedback from students at the universities they want to apply to.
 
