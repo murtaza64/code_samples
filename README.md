@@ -592,7 +592,7 @@ This is from CS 478 Graphics. It generated [this movie](https://www.youtube.com/
 ```
 
 ## Friendship Graphs
-I set up a little experiment to try and visualize the friend groups in our school. I sent out a survey and used Gephi to visualize the resulting data. The Python to process the data using `networkx` was as follows:
+I set up a little experiment to try and visualize the friend groups in our school. [This](https://i.imgur.com/wQLav5o.png) is how it turned out. I sent out a survey and used Gephi to visualize the resulting data. The Python to process the data using `networkx` was as follows:
 
 ```python
 import json
