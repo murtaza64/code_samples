@@ -1,16 +1,125 @@
 # Murtaza's Code Samples / portfolio
-The samples from Essaystance are less interesting than the snippets from random projects and challenges I've collected over the years, which sometimes show more cleverness (at the cost of readability).
+The samples from Essaystance are less interesting than the snippets from random projects and challenges I've collected over the years, which often show more cleverness (perhaps at the cost of readability).
+
+On this page you will find a subset of my programming skills, and hopefully what you're looking for is here.
+
+[Coding Challenges](#coding-challenges)
+Some selected coding challenge solutions I had lying around. Show problem solving, recursion, and use of Python-specific features.
+
+[Essaystance (2020)](#essaystance)
+My latest web project in Django. Snippets show some backend view logic and frontend.
+
+[chess.py (2017)](#chess)
+Terminal chess I built in stock Python. Uses OOP and generators extensively.
+
+[RPi Timetable (2016)](#rpi-timetable)
+Snippet shows a custom data structure used to reprsent an LED grid for displaying text.
+
+[Ray Tracing (C++, 2020)](#ray-tracing)
+For CS478, a simple raytracer in stock C++.
+
+[Friendship Graphs (2018)](#friendship-graphs)
+A personal dataviz experiment/project. Snippet shows data manipulation and cleaning.
+
+[Hash Table (C, 2018)](#hash-table)
+A C project for school. Shows use of pointers and understanding of data structures
+
+External links:
+
+[Teleport (Python, 2018)](https://github.com/murtaza64/teleport/blob/master/tp.py)
+A command line utility that allows you to teleport around your filetree! (full code linked)
+
+The full source for [codeline](thecodeline.co), an older project of mine, is up on my github. 
 
 
-* [Essaystance](#essaystance)
-* [chess.py](#chess)
-* [RPi Timetable](#rpi-timetable)
-* [Ray Tracing (C++)](#ray-tracing)
-* [Coding Challenges](#coding-challenges)
+Some selected source files are included in this repo.
 
 Small notes: I forgot to include `git` on my resume. I indeed have experience with `git`, and have used it extensively in my projects. Also, the small gap during 2019 was due to medical reasons.
 
-## Essaystance (2020)
+
+
+## Coding Challenges
+These are some snippets that I was pretty proud of when I wrote them.
+### Nested Brackets (2017)
+Confirm if a string's brackets are nested properly
+
+```python
+#st = '([{[]}][({}{})[]])'
+b_map = {']':'[', '}':'{', ')':'(', '>':'<'}
+def find_inners(current_bracket, l):
+	inners = []
+	while l:
+		c = l.pop(0)
+		#print(c)
+		if c in '[{(':
+			inners.append(find_inners(c, l))
+			#print(inners)
+		elif b_map[c] == current_bracket:
+			return inners
+		else: 
+			raise SyntaxError
+	raise SyntaxError
+
+def check_brackets(st):
+	try:
+		find_inners('<', list(st)+['>'])
+	except SyntaxError:
+		return False
+	return True
+#print(check_brackets(st))
+```
+
+### Matrix determinant (2017)
+
+```python
+def determinant(matrix):
+    minor_dets = []
+    for i, val in enumerate(matrix[0]):
+        if len(matrix) <= 1:
+            return matrix[0][0]
+        minor_dets.append(val * determinant([row[:i]+row[i+1:] for row in matrix[1:]]))
+    result = 0
+    while minor_dets:
+        try:
+            result += minor_dets.pop(0)
+            result -= minor_dets.pop(0)
+        except IndexError:
+            break
+    return result
+```
+
+### Infix to postfix (2017)
+Uses recursion
+```python
+def postfix_recursive(infix_l):
+    ops = {'+': 1, '-': 1, '/': 2, '*': 2, '^': 3}
+    postfix, cur_ops = [], []
+    while infix_l:
+        c = infix_l.pop(0)
+        if c in ops:
+            while cur_ops and ops[c] <= ops[cur_ops[-1]]:
+                postfix.append(cur_ops.pop())
+            cur_ops.append(c)
+        elif c == '(':
+            postfix += postfix_recursive(infix_l)
+        elif c == ')':
+            while cur_ops:
+                postfix.append(cur_ops.pop())
+            return postfix
+        elif c.isdigit():
+            postfix.append(c)
+
+to_postfix = lambda infix: ''.join(postfix_recursive(list(infix+')')))
+```
+
+### Piglatin oneliner (2016)
+Legit use of a generator expression!
+```python
+def pig_it(text):
+    return ' '.join(w[1:]+w[0]+'ay' if w.isalpha() else w for w in text.split(' '))
+```
+
+## Essaystance
 This platform provides highschoolers with high quality, affordable essay feedback from students at the universities they want to apply to.
 
 ### Priority filter
@@ -92,7 +201,7 @@ def gd_word_count_essay(essay, user):
     credset = OAuthCredentialSet.objects.get(user=user) #OAuth credentials are stored in the Essaystance db
     credentials = credset.to_credentials()
     gapi_service = build('docs', 'v1', credentials=credentials)
-    doc = gapi_service.documents().get(documentId=doc_id).execute() #TODO: error checking--timeout
+    doc = gapi_service.documents().get(documentId=doc_id).execute() 
     credset.update_from_credentials(credentials)
     n = 0
     for section in doc['body']['content']:
@@ -118,12 +227,12 @@ def gd_word_count_essay(essay, user):
  ```
  
  ### Rate your review (js)
- Handles the frontend rendering of the 1-5 star rater, allowing you to select a rating. When you hover over or click a star, all lower stars get filled in (so it looks pretty!). (The stars get darker when you click one to select a rating.)
+ Handles the frontend rendering of the 1-5 star rater, allowing you to select a rating. When you hover over or click a star, all lower stars get filled in (so it looks pretty!). (The stars get darker when you click one to select a rating.) This snippet demonstrates the ability to use DOM event handlers to create a nice custom UI element.
  ```javascript
  function change_rating(id, value) { //this handler is attached in the HTML
     $(".star_" + id).each(function(index, item) {
         if (index < value) {
-            $(item).attr("src", star_gold_url);
+            $(item).attr("src", star_gold_url); //we change the star color by changing the source image
         }
         else {
             $(item).attr("src", star_grey_url);
@@ -258,8 +367,8 @@ $(document).ready(function() {
 })
 ```
 
-## Chess (2017)
-I created this terminal chess a while back. It makes use of some nice Python features. It supports everything except en passant and castling, which slipped my mind at the time. Below are some snippets, but the full code is available in the repo.
+## Chess
+I created this terminal chess a while back. It makes use of some nice Python features. It supports everything except en passant and castling, which slipped my mind at the time. Below are some snippets, but the full code is available in this repo.
 
 Example piece class. `theoretical moves` is a generator used to retrieve all moves that the piece could make if the board were empty. This is combined with `validate_move` to create the square highlights in the terminal when you select a piece. `validate_move` is sometimes used directly if algebraic chess notation is used to make the move.
 ```python
@@ -338,9 +447,9 @@ def print_piece_info(self, piece):
 ```
 Check out the rest of the script for more.
 
-## RPi Timetable (2016)
+## RPi Timetable
 
-A few years ago, I built an LED timetable for my school desk using a Raspberry Pi. Rendering of text to the LED grid was handled by the classes in `matrix.py`, and the main script ran two threads (one for the modulation of the LEDs and one for updating the current lesson based on the current time). The script includes a helper function to make a bitmap which I used for testing (and fun). The rest is a little uninteresting as it is just mostly matrix transposition, but it was interesting coming up with a data structure and relevant methods to represent a scrolling LED sign. This is a little older, so please excuse the inadherence to Python style.
+A few years ago, I built an LED timetable for my school desk using a Raspberry Pi. Rendering of text to the LED grid was handled by the classes in `matrix.py`, and the main script ran two threads (one for the modulation of the LEDs and one for updating the current lesson based on the current time). The [full script](https://github.com/murtaza64/timetable) includes a helper function to make a bitmap which I used for testing (and fun). It's mostly matrix transposition, but it was interesting coming up with a data structure and relevant methods to represent a scrolling LED sign. This is a little older, so please excuse the inadherence to Python style.
 
 ```python
 from time import sleep
@@ -361,50 +470,8 @@ def monochrome(inMatrix):
 			else:
 				matrix[-1].append(EMPTYTRIPLE)
 	return matrix
-def makeBMP(matrix, name):
-	global errors
-	w, h = 0, 0
-	for row in matrix:
-		h+=1
-	for cell in matrix[0]:
-		w+=1
-	depth = 24
-	padding = int(4 - (w*(depth/8) %4)) if (w*(depth/8) % 4 != 0) else 0
-	bytes_per_row = int (w*(depth/8) + padding) 
-	bytes_in_image = h*bytes_per_row
-
-	size = 54 + bytes_in_image
-	BITMAPFILEHEADER = pack('<hihhi',0x4D42, size, 0, 0, 54)
-
-	BITMAPINFOHEADER = pack('<iiihhiiiiii', 40, w, -h, 1, depth, 0, bytes_in_image, 2835, 2835, 0, 0)
-
-	imagebytes = []
-
-	for row in matrix:
-		for cell in row:
-			red=cell[0].to_bytes(1, byteorder='little')
-			green=cell[2].to_bytes(1, byteorder='little')
-			blue=cell[1].to_bytes(1, byteorder='little')
-
-			imagebytes.append(blue)
-			imagebytes.append(green)
-			imagebytes.append(red)
-			
-		for i in range(0, padding):
-			imagebytes.append((0).to_bytes(1, byteorder='little'))
-	try:
-		image=open('bmp/'+name, 'wb')
-		image.write(BITMAPFILEHEADER)
-		image.write(BITMAPINFOHEADER)
-		for byte in imagebytes:
-			image.write(byte)
-		image.close()
-	except PermissionError:
-		print('permission denied in ' + 'bmp/' + name)
-		errors += 'permission denied in ' + 'bmp/' + name + '\n'
-	except FileNotFoundError:
-		os.makedirs('bmp/')
 	
+#...
 
 class pixelmatrix:
 	def __init__(self, dims=(8,8), BMP=0, _print=1):
@@ -438,30 +505,8 @@ class pixelmatrix:
 		if self.BMP:
 			makeBMP(self.matrix, filename)
 
-	def update(self, inMatrix, coords=(0,0)):
-		y,x=coords
-		ylen=len(inMatrix)
-		xlen=len(inMatrix[0])
-		for i, row in enumerate(inMatrix):
-			for j, cell in enumerate(row):
-				self.matrix[y+i][x+j] = cell
-
-	def newRow(self):
-		return [EMPTYTRIPLE for k in range (self.xlen)]
-	def newCol(self):
-		return [EMPTYTRIPLE for k in range (self.ylen)]
-	def pushRow(self, row, side='bottom'):
-		xin = len(row)
-		if side == 'bottom':
-			del self.matrix[0]
-			self.matrix.append(self.newRow())
-			for i in range (xin):
-				self.matrix[-1][i]=row[i]
-		if side == 'top':
-			del self.matrix[-1]
-			self.matrix.insert(0, self.newRow())
-			for i in range (xin):
-				self.matrix[0][i]=row[i]
+	#... (code omitted to keep it short)
+	
 	def pushCol(self, col, side='right'):
 		yin = len(col)
 		if side == 'right':
@@ -497,23 +542,9 @@ class pixelmatrix:
 			self.pushCol(self.newCol())
 			self.step()
 
-if __name__ == "__main__":
-	testStr='OO'
-
-	#scrollMatrix(testStr)
-
-	#updateMatrix(testMatrix, (4,4))
-	#showMatrix()
-
-	screen = pixelmatrix(dims=(8,16))
-	screen.step()
-	screen.scrollText(sys.argv[1])
-	screen.update(monochrome(testMatrix), (4,4))
-	screen.step()
-	print(errors)
 ```
 
-## Ray Tracing (2020)
+## Ray Tracing
 
 This is from CS 478 Graphics. It generated [this movie](https://www.youtube.com/watch?v=UhzPQjyFjdE). The full file is available in the repo (`previz.cpp`), but this snippet shows how glass refraction is calculated for a sphere. This includes Fresnel effects.
 
@@ -560,82 +591,338 @@ This is from CS 478 Graphics. It generated [this movie](https://www.youtube.com/
     }
 ```
 
-## Coding Challenges
-### Nested Brackets (2017)
-Confirm if a string's brackets are nested properly
+## Friendship Graphs
+I set up a little experiment to try and visualize the friend groups in our school. I sent out a survey and used Gephi to visualize the resulting data. The Python to process the data using `networkx` was as follows:
 
 ```python
-#st = '([{[]}][({}{})[]])'
-b_map = {']':'[', '}':'{', ')':'(', '>':'<'}
-def find_inners(current_bracket, l):
-	inners = []
-	while l:
-		c = l.pop(0)
-		#print(c)
-		if c in '[{(':
-			inners.append(find_inners(c, l))
-			#print(inners)
-		elif b_map[c] == current_bracket:
-			return inners
-		else: 
-			raise SyntaxError
-	raise SyntaxError
+import json
+import csv
+from collections import namedtuple
+import networkx as nx
 
-def check_brackets(st):
-	try:
-		find_inners('<', list(st)+['>'])
-	except SyntaxError:
-		return False
-	return True
-#print(check_brackets(st))
+G = nx.Graph()
+
+with open('fixednames.json') as f:
+    jnames = json.loads(f.read())
+Name = namedtuple('Name', 'first last form year gender realFirst realLast uname')
+Name.__str__ = lambda self: self.uname
+names = [Name(**name) for name in jnames if name['year']=='12']
+print(names)
+#namesohjun = sorted([name for name in jnames if name['year']=='12'], key=lambda n: n['first'])
+
+G.add_nodes_from(names)
+
+with open('data.csv', newline='') as f:
+    fr = csv.reader(f)
+    header = next(fr)
+    rows = reversed(list(fr))
+    done_names = []
+    for row in rows:
+        date = row[0]
+        thisname = row[1]
+        if not thisname or thisname in done_names:
+            continue
+        else:
+            done_names.append(thisname)
+        for node in G.nodes():
+            if node.first + ' ' + node.last == thisname.upper():
+                thisnode = node
+                print(thisnode)
+                break
+        else:
+            raise ValueError('you messed up')
+        for i, score in enumerate(row[2:]):
+            if score == '':
+                score = '0'
+            try:
+                G[thisnode][names[i]]['weight'] = (int(score) + G[thisnode][names[i]]['weight'])/2
+            except KeyError:
+                G.add_edge(thisnode, names[i], weight=int(score))
+
+if __name__ == '__main__':
+    # for node in nodes:
+    #     node.print_friendships()
+
+    for edge in G.edges(): #remove zeroes
+        if G[edge[0]][edge[1]]['weight'] <= 2:
+            G.remove_edge(*edge)
+    for edge in G.edges(): #remove selflinks
+        if edge[0] == edge[1]:
+            G.remove_edge(*edge)
+
+    for n, nbrs in G.adjacency_iter():
+        #print(n.first, end=':\n')
+        for nbr, eattr in nbrs.items():
+            pass
+            #print('\t', nbr.first, eattr['weight'])
+    print(len(names))
+    for name in names:
+        for name2 in names:
+            if str(name) == str(name2) and name != name2:
+                print(name)
+    nx.write_graphml(G, 'friendships.graphml')
+```
+## Hash Table
+Here's an implementation of a hash table in C for CS 223 Data Structures and Programming Techniques. Nothing too special except demonstrating comfort with pointers.
+```c
+#include <stdlib.h>
+#include <string.h>
+
+#include <stdio.h>
+
+#include "smap.h"
+#define SMAP_ARR_INITIAL_SIZE 4
+
+typedef struct node {
+    char* key;
+    int* val;
+    struct node* next;
+} node;
+
+struct _smap {
+    int size;
+    int arr_cap;
+    int (*hash)(const char* s);
+    node** arr;
+};
+
+int smap_default_hash(const char *s){
+    //Horner's rule with x=31
+    int h = s[0];
+    for (int i = 1; i < strlen(s); i++) {
+        h = 31*h + s[i];
+    }
+    if (h < 0) {
+        h = -h;
+    }
+    if (h < 0) {
+        h = 0;
+    }
+    //printf("PRODUCED HASH %i FOR \"%s\"\n", h, s);
+    return h;
+}
+
+void smap_destroy_array(node** arr, int n, bool destroy_keys) {
+    for (int i = 0; i < n; i++) {
+        node* curr = arr[i];
+        while (curr->next != NULL) {
+            node* next = curr->next;
+            if (destroy_keys) {
+                free(curr->key);
+            }
+            free(curr);
+            curr = next;
+        }
+        if (destroy_keys) {
+            free(curr->key);
+        }
+        free(curr);
+    }
+    free(arr);
+}
+
+node* smap_create_empty_node() {
+    node* new = malloc(sizeof(node));
+    if (new == NULL) {
+        return NULL;
+    }
+    new->key = NULL;
+    new->val = NULL;
+    new->next = NULL;
+    return new;
+}
+
+node** smap_create_array(int cap) {
+    node** arr = malloc(sizeof(node*) * cap);
+    if (arr == NULL){
+        return NULL;
+    }
+    for (int i = 0; i < cap; i++) {
+        arr[i] = smap_create_empty_node();
+        if (arr[i] == NULL) {
+            smap_destroy_array(arr, SMAP_ARR_INITIAL_SIZE, 1);
+            return NULL;
+        }
+    }
+    return arr;
+}
+
+smap* smap_create(int (*h)(const char* s)){
+    if (h == NULL) {
+        return NULL;
+    }
+    smap* map = malloc(sizeof(smap));
+    if (map == NULL) {
+        return NULL;
+    }
+    map->arr = smap_create_array(SMAP_ARR_INITIAL_SIZE);
+    if (map->arr == NULL){
+        free(map);
+        return NULL;
+    }
+    map->size = 0;
+    map->arr_cap = SMAP_ARR_INITIAL_SIZE;
+    map->hash = h;
+    return map;
+}
+
+int smap_size(const smap *m) {
+    return m != NULL? m->size : -1;
+}
+
+node* smap_find_key_node(const smap* m, const char* key) {
+    int index = m->hash(key) % m->arr_cap;
+    // printf("FINDING m[%s] AT m->arr[%i]\n", key, index);
+    node* curr = m->arr[index];
+    while (curr->next != NULL && strcmp(curr->key, key) != 0) {
+        curr = curr->next;
+    }
+    if (curr->key == NULL) {
+        // printf("   not found\n");
+    }
+    else {
+    // printf("   found\n");
+    }
+    return curr;
+}
+
+bool smap_contains_key(const smap *m, const char *key) {
+    if (key == NULL || m == NULL) {
+        return 0;
+    }
+    node* curr = smap_find_key_node(m, key);
+    return curr->key != NULL;
+}
+
+bool smap_reallocate(smap* m) {
+    int new_cap = m->arr_cap * 2;
+    node** new_arr = smap_create_array(new_cap);
+    if (new_arr == NULL) {
+        return 0;
+    }
+    for (int i = 0; i < m->arr_cap; i++) {
+        node* old_curr = m->arr[i];
+        while(old_curr->next != NULL){
+            int index = m->hash(old_curr->key) % new_cap;
+            // printf("(%s=>%i) moved to m->arr[%i]\n", old_curr->key, *(old_curr->val), index);
+            node* new_curr = new_arr[index];
+            while (new_curr->next != NULL) {
+                new_curr = new_curr->next;
+            }
+            new_curr->key = old_curr->key;
+            new_curr->val = old_curr->val;
+            new_curr->next = smap_create_empty_node();
+            if (new_curr->next == NULL) {
+                smap_destroy_array(new_arr, new_cap, 0);
+                return 0;
+            }
+            old_curr = old_curr->next;
+        }
+    }
+    smap_destroy_array(m->arr, m->arr_cap, 0);
+    m->arr = new_arr;
+    m->arr_cap = new_cap;
+    return 1;
+}
+
+bool smap_put(smap *m, const char *key, int *value){
+    // printf("PUTTING (%s=>%i)\n  ", key, *value);
+    if (key == NULL || m == NULL) {
+        return 0;
+    }
+    node* curr = smap_find_key_node(m, key);
+    if (curr->key == NULL) {
+        if (m->size+1 == m->arr_cap) {
+            //reallocate array and rehash elements
+            smap_reallocate(m);
+            curr = smap_find_key_node(m, key);
+        }
+        curr->next = smap_create_empty_node();
+        if (curr->next == NULL) {
+            return 0;
+        }
+        char* new_key = malloc(sizeof(char) * (strlen(key)+1));
+        if (new_key == NULL) {
+            free(curr->next);
+            curr->next = NULL;
+            return 0;
+        }
+        strcpy(new_key, key);
+        curr->key = new_key;
+        m->size++;
+    }
+    curr->val = value;
+    return 1;
+}
+
+int *smap_get(smap *m, const char *key) {
+    if (key == NULL || m == NULL) {
+        return NULL;
+    }
+    node* curr = smap_find_key_node(m, key);
+    if (curr->key == NULL) {
+        return NULL;
+    }
+    else {
+        return curr->val;
+    }
+}
+
+void smap_print(smap* m) {
+    for (int i = 0; i < m->arr_cap; i++) {
+        printf("m->arr[%i] = ", i);
+        node* curr = m->arr[i];
+        while(curr->next != NULL){
+            printf("(%s=>%i) ", curr->key, *(curr->val));
+            curr = curr->next;
+        }
+        printf("\n");
+    }
+}
+
+int *smap_remove(smap *m, const char *key) {
+    if (key == NULL || m == NULL) {
+        return NULL;
+    }
+    int index = m->hash(key) % m->arr_cap;
+    // printf("FINDING m[%s] AT m->arr[%i]\n", key, index);
+    node* curr = m->arr[index];
+    node** ptr_to_curr = &(m->arr[index]);
+    while (curr->next != NULL && strcmp(curr->key, key) != 0) {
+        ptr_to_curr = &(curr->next);
+        curr = curr->next;
+    }
+    if (curr->key != NULL) {
+        *ptr_to_curr = curr->next;
+        int* ret = curr->val;
+        free(curr->key);
+        free(curr);
+        m->size--;
+        return ret;
+    }
+    else {
+        return NULL;
+    }
+}
+
+void smap_destroy(smap *m) {
+    if(m != NULL) {
+        smap_destroy_array(m->arr, m->arr_cap, 1);
+        free(m);
+    }
+}
+
+void smap_for_each(smap *m, void (*f)(const char *, int *, void *), void *arg) {
+    if (m == NULL || f == NULL) {
+        return;
+    }
+    for (int i = 0; i < m->arr_cap; i++) {
+        node* curr = m->arr[i];
+        while(curr->next != NULL){
+            f(curr->key, curr->val, arg);
+            curr = curr->next;
+        }
+    }
+}
 ```
 
-### Matrix determinant (2017)
-
-```python
-def determinant(matrix):
-    minor_dets = []
-    for i, val in enumerate(matrix[0]):
-        if len(matrix) <= 1:
-            return matrix[0][0]
-        minor_dets.append(val * determinant([row[:i]+row[i+1:] for row in matrix[1:]]))
-    result = 0
-    while minor_dets:
-        try:
-            result += minor_dets.pop(0)
-            result -= minor_dets.pop(0)
-        except IndexError:
-            break
-    return result
-```
-
-### Infix to postfix (2017)
-
-```python
-def postfix_recursive(infix_l):
-    ops = {'+': 1, '-': 1, '/': 2, '*': 2, '^': 3}
-    postfix, cur_ops = [], []
-    while infix_l:
-        c = infix_l.pop(0)
-        if c in ops:
-            while cur_ops and ops[c] <= ops[cur_ops[-1]]:
-                postfix.append(cur_ops.pop())
-            cur_ops.append(c)
-        elif c == '(':
-            postfix += postfix_recursive(infix_l)
-        elif c == ')':
-            while cur_ops:
-                postfix.append(cur_ops.pop())
-            return postfix
-        elif c.isdigit():
-            postfix.append(c)
-
-to_postfix = lambda infix: ''.join(postfix_recursive(list(infix+')')))
-```
-
-### Piglatin oneliner (2016)
-
-```python
-def pig_it(text):
-    return ' '.join(w[1:]+w[0]+'ay' if w.isalpha() else w for w in text.split(' '))
-```
