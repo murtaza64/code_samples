@@ -24,6 +24,9 @@ A personal dataviz experiment/project. Snippet shows data manipulation and clean
 
 Academic:
 
+[Genetic Algorithm (Python, 2021)](#genetic-algorithm)
+For CS470 AI, A genetic algorithm built from scratch for the Santa Fe/John Muir artificial ant problem
+
 [Ray Tracing (C++, 2020)](#ray-tracing)
 For CS478 Graphics, a simple raytracer in stock C++.
 
@@ -557,6 +560,79 @@ class pixelmatrix:
 			self.step()
 
 ```
+
+## Genetic Algorithm
+
+This was a genetic algorithm I built for the artificial ant problem, wherein an ant with one perceptor and a few states is evolved to follow trails of food effectively. I have shown three functions here which are responsible for generating the ants of the next generation. `copulate` produces offspring between two parents based on a crossover probability. `mutate` changes genes of one ant based on a mutation probability. `select_parents` chooses parents from the set of ants in the current generation via a fitness rank lottery.
+
+```python
+def copulate(probability_crossover, *parents):
+    '''
+    generate a child from multiple parents
+    '''
+    parent_index = random.randrange(len(parents))
+    child = ''
+    for i in range(30):
+        child += parents[parent_index][i]
+        if random.random() < probability_crossover:
+            parent_index = (parent_index + 1) % len(parents)
+    return child
+
+def mutate(ants, probability_mutation):
+    '''
+    ants : list[str] -- ants to mutate
+    probability_mutation : number -- how likely each character is to randomly mutate
+
+    '''
+    new_ants = []
+    mutations = 0
+    for ant in ants:
+        new_ant = ''
+        for i, c in enumerate(ant):
+            if random.random() < probability_mutation:
+                if i % 3 == 0:
+                    new_ant += str(random.randint(1, 4))
+                else:
+                    new_ant += str(random.randint(0, 9))
+            else:
+                new_ant += c
+        if ant != new_ant:
+            mutations += 1
+        new_ants.append(new_ant)
+    return new_ants, mutations
+
+def select_parents(old_gen, n_parents, auto_top_n=-1):
+    '''
+    old_gen : list[str] -- population to select from
+    n_parents : int -- how many parents to select
+
+    return : list[str] -- population of ants selected
+    '''
+    if auto_top_n == -1:
+        auto_top_n = n_parents//4
+
+    #preselect the top n performers (default is a quarter of the parents to be selected)
+    chosen_indices = set(range(auto_top_n))
+    indices = list(range(len(old_gen)))
+
+    #lottery for the rest
+    #higher weights for higher fitness
+    weights = [(population_size - i)**2  for i in indices]
+    for index in range(auto_top_n):
+        weights[index] = 0
+
+    remaining = n_parents
+    while len(chosen_indices) != n_parents:
+        remaining = n_parents - len(chosen_indices)
+        for selected_index in random.choices(indices, weights, k=remaining):
+            if weights[selected_index]:
+                weights[selected_index] = 0
+                chosen_indices.add(selected_index)
+
+
+    return [old_gen[i] for i in chosen_indices]
+```
+
 
 ## Ray Tracing
 
