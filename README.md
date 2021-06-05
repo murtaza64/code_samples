@@ -563,7 +563,7 @@ class pixelmatrix:
 
 ## Genetic Algorithm
 
-This was a genetic algorithm I built for the artificial ant problem, wherein an ant with one perceptor and a few states is evolved to follow trails of food effectively. I have shown three functions here which are responsible for generating the ants of the next generation. `copulate` produces offspring between two parents based on a crossover probability. `mutate` changes genes of one ant based on a mutation probability. `select_parents` chooses parents from the set of ants in the current generation via a fitness rank lottery.
+This was a genetic algorithm I built for the artificial ant problem, wherein an ant with one perceptor and a few states is evolved to follow trails of food effectively. I have shown three functions here which are responsible for generating the ants of the next generation (the full `geneticAlgorithm.py` file is in the repo). `copulate` produces offspring between two parents based on a crossover probability. `mutate` changes genes of one ant based on a mutation probability. `select_parents` chooses parents from the set of ants in the current generation via a fitness rank lottery.
 
 ```python
 def copulate(probability_crossover, *parents):
